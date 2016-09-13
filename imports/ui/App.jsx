@@ -1,91 +1,99 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
+import { Meteor } from 'meteor/meteor';
+var Dropzone = require('react-dropzone');
 
-import { Tasks } from '../api/tasks.js';
-
-import Task from './Task.jsx';
-import AccountsUIWrapper from './AccountsUIWrapper.jsx';
+import Chart from './Chart.jsx';
+import { Sensors } from '../api/sensors.js';
 
 // App component - represents the whole app
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            hideCompleted: false,
-        };
     }
 
-    renderTasks() {
-        let filteredTasks = this.props.tasks;
-        if (this.state.hideCompleted) {
-            filteredTasks = filteredTasks.filter(task => !task.checked);
-        }
-
-        return filteredTasks.map((task) => (
-            <Task key={task._id} task={task}/>
-        ));
+    nanoToMili(pNano) {
+        return Math.round(pNano/100000);
     }
 
-    handleSubmit(event) {
-        event.preventDefault();
+    onDrop(files) {
+        var _this = this;
+        var sensors = {};
+        var firstTimeValue = 0;
 
-        // Find the text field via the React ref
-        const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
+        files.forEach(
+            function(file) {
+                Papa.parse(file, {
+                    step: function(row) {
+                        var sensorRow = row.data[0];
+                        var sensorID = sensorRow.splice(0, 1)[0];
 
-        Meteor.call('tasks.insert', text);
+                        if (sensorRow[0] !== '0' && firstTimeValue === 0)
+                            firstTimeValue = parseFloat(sensorRow[0]);
+                        sensorRow[0] = parseFloat(sensorRow[0]) - firstTimeValue;
+                        sensorRow[0] = _this.nanoToMili(sensorRow[0]);
 
-        // Clear form
-        ReactDOM.findDOMNode(this.refs.textInput).value = '';
+                        for (var i=1; i < sensorRow.length; i++)
+                            sensorRow[i] = parseFloat(sensorRow[i]);
+
+                        if (sensors[sensorID] === undefined)
+                            sensors[sensorID] = [];
+                        sensors[sensorID].push(sensorRow);
+                    },
+                    complete: function() {
+                        delete sensors[""]; // Delete empty id
+                        for (var key in sensors) {
+                            Meteor.call('sensors.insert', key, sensors[key]);
+                        }
+                    }
+                });
+            }, this);
     }
 
-    toggleHideCompleted() {
-        this.setState({
-            hideCompleted: !this.state.hideCompleted,
+    renderCharts() {
+        console.log("renderCharts()");
+        return this.props.sensors.map((sensor) => {
+            if (sensor.sensorId !== "-1" && sensor.sensorId !== "-2")
+            return (
+                        <Chart
+                          key={sensor._id}
+                          sensor={sensor}
+                        />
+            );
         });
     }
 
     render() {
         return (
-            <div className="container">
+            <div>
                 <header>
-                <h1>Todo List ({this.props.incompleteCount})</h1>
-
-                <label className="hide-completed">
-                    <input
-                    type="checkbox"
-                    readOnly
-                    checked={this.state.hideCompleted}
-                    onClick={this.toggleHideCompleted.bind(this)}/>
-                Hide Completed Tasks
-                </label>
-
-                <AccountsUIWrapper/>
-
-                { this.props.currentUser ?
-                    <form className="new-task" onSubmit={this.handleSubmit.bind(this)}>
-                        <input type="text" ref="textInput" placeholder="Type to add new tasks"/>
-                        </form> : ''
-                }
+                <h1>Ynoapp</h1>
                 </header>
 
-                <ul>{this.renderTasks()}</ul>
-                </div>
+                <Dropzone onDrop={this.onDrop.bind(this)} className="dropzone">
+                <div className="dropzone-text">Try dopping some files here, or click to select files to uplaod</div>
+                </Dropzone>
+
+                <ul>
+                {this.renderCharts()}
+                </ul>
+            </div>
         );
     }
 }
 
 App.propTypes = {
-    tasks: PropTypes.array.isRequired,
-    incompleteCount: PropTypes.number.isRequired,
-    currentUser: PropTypes.object,
+    sensors: PropTypes.array.isRequired,
+    sensorsCount: PropTypes.number.isRequired,
 };
 
 export default createContainer(() => {
+    Meteor.subscribe('sensors');
+    
+    console.log(Sensors.find({}).fetch());
     return {
-        tasks: Tasks.find({}, { sort: { createdAt: -1 } }).fetch(),
-        incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
-        currentUser: Meteor.user(),
+        sensors: Sensors.find({}).fetch(),
+        sensorsCount: Sensors.find({}).count(),
     };
 }, App);
