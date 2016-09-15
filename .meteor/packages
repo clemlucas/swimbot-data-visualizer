@@ -32,3 +32,4 @@ izzilab:material-ui
 materialize:materialize@=0.97.6
 stolinski:stylus-multi
 msavin:mongol
+ultimatejs:tracker-react

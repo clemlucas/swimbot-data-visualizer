@@ -8,8 +8,7 @@ export const Sensors = new Mongo.Collection('sensors');
 if (Meteor.isServer) {
     // This code only runs on the server
      Meteor.publish('sensors', function sensorsPublication() {
-         let find = Sensors.find();
-         return find;
+         return Sensors.find();
      });
 }
 

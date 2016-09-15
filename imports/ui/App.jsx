@@ -5,7 +5,7 @@ import SensorsWrapper from './SensorsWrapper.jsx';
 
 const styles = {
   title: {
-    cursor: 'pointer',
+    paddingLeft: '12px',
   },
 };
 

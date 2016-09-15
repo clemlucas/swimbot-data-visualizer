@@ -14,19 +14,15 @@ const idSensor = {
   "lacc": "10",
 };
 
-class SensorsWrapper extends Component {
+export default class SensorsWrapper extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      sensors: []
-    };
-
-    this.handleNewSensors = this.handleNewSensors.bind(this);
   }
 
-  handleNewSensors (newSensors) {
-    this.setState( { sensors: newSensors});
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("this.props", this.props.sensors.length);
+    console.log("nextProps", nextProps.sensors.length);
+    return (this.props.sensors.length !== nextProps.sensors.length);
   }
 
   nanoToMili(pNano) {
@@ -34,11 +30,15 @@ class SensorsWrapper extends Component {
   }
 
   renderCharts() {
-    if (this.props.sensorsCount === 0) {
-      return '';
+    if (this.props.sensors.length === 0) {
+      return (
+        <div className="container">
+          <h2>Import a sensors file</h2>
+        </div>
+      );
     }
 
-    let lastSensors = this.state.sensors;
+    let lastSensors = this.props.sensors[0].data;
 
     return (
       <div className="container">
@@ -83,7 +83,7 @@ class SensorsWrapper extends Component {
         complete: function() {
           delete sensors[""]; // Delete empty id
           Meteor.call('sensors.insert', sensors);
-          _this.handleNewSensors(sensors);
+          // _this.handleNewSensors(sensors);
         }
       });
     }
@@ -110,14 +110,13 @@ class SensorsWrapper extends Component {
 }
 
 SensorsWrapper.propTypes = {
-  sensorsCount: PropTypes.number.isRequired,
+  sensors: PropTypes.array.isRequired,
 };
 
 export default createContainer(() => {
   Meteor.subscribe('sensors');
 
   return {
-    // sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch(),
-    sensorsCount: Sensors.find({}).count(),
+    sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch(),
   };
 }, SensorsWrapper);
