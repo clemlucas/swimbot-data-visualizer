@@ -6,10 +6,13 @@
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
+    "material-ui": "^0.15.4",
     "meteor-node-stubs": "~0.2.0",
     "react": "^15.3.1",
     "react-addons-pure-render-mixin": "^15.3.1",
     "react-dom": "^15.3.1",
-    "react-dropzone": "^3.6.0"
+    "react-dropzone": "^3.6.0",
+    "react-materialize": "^0.16.4",
+    "react-tap-event-plugin": "^1.0.0"
   }
 }

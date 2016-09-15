@@ -4,7 +4,7 @@ import { check } from 'meteor/check';
 
 export const Sensors = new Mongo.Collection('sensors');
 
- 
+
 if (Meteor.isServer) {
     // This code only runs on the server
      Meteor.publish('sensors', function sensorsPublication() {
@@ -14,10 +14,10 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-    'sensors.insert'(sensorId, data) {
+    'sensors.insert'(data) {
         Sensors.insert({
-            sensorId: sensorId,
-            data: data
+            data: data,
+            createdAt: new Date(),
         });
     },
 

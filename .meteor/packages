@@ -28,3 +28,7 @@ fortawesome:fontawesome
 cfs:standard-packages
 cfs:gridfs
 harrison:papa-parse
+izzilab:material-ui
+materialize:materialize@=0.97.6
+stolinski:stylus-multi
+msavin:mongol

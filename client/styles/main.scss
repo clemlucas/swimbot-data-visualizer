@@ -12,120 +12,19 @@ $color_alto_approx: #ddd;
 //fonts
 $font_0: sans-serif;
 
-body {
-	font-family: $font_0;
-	background-attachment: fixed;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	padding: 0;
-	margin: 0;
-	font-size: 14px;
-}
-.container {
-	max-width: 600px;
-	margin: 0 auto;
-	min-height: 100%;
-	background: $white;
-}
-header {
-	background: $color_iceberg_approx;
-	background-image: linear-gradient(to bottom, $color_humming_bird_approx, $color_mystic_approx 100%);
-	padding: 20px 15px 15px;
-	position: relative;
-	.hide-completed {
-		float: right;
-	}
-}
-#login-buttons {
-	display: block;
-}
-h1 {
-	font-size: 1.5em;
-	margin: 0;
-	margin-bottom: 10px;
-	display: inline-block;
-	margin-right: 1em;
-}
-form {
-	margin-top: 10px;
-	margin-bottom: -10px;
-	position: relative;
-}
-ul {
-	margin: 0;
-	padding: 0;
-	background: $white;
-}
-.delete {
-	float: right;
-	font-weight: bold;
-	background: none;
-	font-size: 1em;
-	border: none;
-	position: relative;
-}
-li {
-	position: relative;
-	list-style: none;
-	padding: 15px;
-	border-bottom: $color_gallery_approx solid 1px;
-	.text {
-		margin-left: 10px;
-	}
-	&.checked {
-		color: $color_suva_gray_approx;
-		.text {
-			text-decoration: line-through;
-		}
-	}
-	&.private {
-		background: $color_gallery_approx;
-		border-color: $color_alto_approx;
-	}
-}
-.toggle-private {
-	margin-left: 5px;
-}
-@media(max-width: 600px) {
-	li {
-		padding: 12px 15px;
-	}
-	.search {
-		width: 150px;
-		clear: both;
-	}
-	.new-task input {
-		padding-bottom: 5px;
-	}
-}
-.new-task input {
-	//Instead of the line below you could use @include box-sizing($bs)
-	box-sizing: border-box;
-	padding: 10px 0;
-	background: transparent;
-	border: none;
-	width: 100%;
-	padding-right: 80px;
-	font-size: 1em;
-	&:focus {
-		outline: 0;
-	}
-}
 .dropzone {
-	width: 200px;
-  height: auto;
-  border: 2px dashed rgb(102, 102, 102);
-  border-radius: 5px;
+    width: 200px;
+    height: auto;
+    border: 2px dashed rgb(102, 102, 102);
+    border-radius: 5px;
+    padding: 5px;
 
-	.dropzone-text {
-		padding: 8px;
-    text-align: center;
-	}
+    .dropzone-text {
+        padding: 8px;
+        text-align: center;
+    }
 }
 .chart {
-	height: 300px;
-	width: 100%;
+    height: 300px;
+    width: 100%;
 }
