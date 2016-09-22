@@ -17,8 +17,5 @@
     "react-materialize": "^0.16.4",
     "react-router": "^2.8.1",
     "react-tap-event-plugin": "^1.0.0"
-  },
-  "devDependencies": {
-    "electron": "^1.4.0"
   }
 }

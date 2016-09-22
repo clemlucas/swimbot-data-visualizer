@@ -33,6 +33,4 @@ materialize:materialize@=0.97.6
 stolinski:stylus-multi
 msavin:mongol
 ultimatejs:tracker-react
-meson:electron
-arboleya:electrify
 underscore
