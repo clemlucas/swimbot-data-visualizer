@@ -1,6 +1,9 @@
 {
   "name": "ynoapp",
   "private": true,
+  "engines": {
+      "node": "5.9.1"
+  },
   "scripts": {
     "start": "meteor run"
   },
