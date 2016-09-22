@@ -12,23 +12,45 @@ $color_alto_approx: #ddd;
 //fonts
 $font_0: sans-serif;
 
-nav .brand-logo {
-  padding-left: 12px; 
+nav {
+	margin-bottom: 12px;
+	.brand-logo {
+		padding-left: 12px;
+	}
 }
 
 .dropzone {
-    width: 200px;
-    height: auto;
-    border: 2px dashed rgb(102, 102, 102);
-    border-radius: 5px;
-    padding: 5px;
+		width: 200px;
+		height: auto;
+		border: 2px dashed rgb(102, 102, 102);
+		border-radius: 5px;
+		padding: 5px;
 
-    .dropzone-text {
-        padding: 8px;
-        text-align: center;
-    }
+		.dropzone-text {
+				padding: 8px;
+				text-align: center;
+		}
 }
 .chart {
-    height: 300px;
-    width: 100%;
+		height: 300px;
+		width: 100%;
+}
+
+.file-select {
+	margin-top: 12px;
+	font-size: 1.2vmin !important;
+}
+
+.menu-item {
+	font-size: 1.2vmin !important;
+}
+
+#main-flexbox {
+	display: flex;
+}
+
+#loading-file-flexbox {
+	padding-left: 12px;
+	display: flex;
+	flex-direction: column;
 }

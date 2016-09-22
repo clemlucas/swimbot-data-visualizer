@@ -3,120 +3,119 @@ import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Sensors } from '../api/sensors.js';
-import { Button, Icon } from 'react-materialize';
+import { Button, Icon, Col, Row } from 'react-materialize';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
-import Chart from './Chart.jsx';
-
-const idSensor = {
-  "acc": "1",
-  "magn": "2",
-  "gyro": "4",
-  "lacc": "10",
-};
+import SensorsCharts from './SensorsCharts.jsx';
 
 export default class SensorsWrapper extends Component {
-  constructor(props) {
-    super(props);
-  }
+	constructor(props) {
+		super(props);
 
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log("this.props", this.props.sensors.length);
-    console.log("nextProps", nextProps.sensors.length);
-    return (this.props.sensors.length !== nextProps.sensors.length);
-  }
+		this.state = {
+			selectedSensorIndex: 0,
+			selectedSensor: {}
+		};
+	}
 
-  nanoToMili(pNano) {
-    return Math.round(pNano/100000);
-  }
+	handleSelectChange(event, index, value) {
+		console.log(index, value);
 
-  renderCharts() {
-    if (this.props.sensors.length === 0) {
-      return (
-        <div className="container">
-          <h2>Import a sensors file</h2>
-        </div>
-      );
-    }
+		this.setState({
+			selectedSensorIndex: index,
+		});
+	};
 
-    let lastSensors = this.props.sensors[0].data;
+	renderFilesHistoryList() {
+		let list = [];
 
-    return (
-      <div className="container">
-        <Chart name='acc' sensor={lastSensors[1]}/>
-        <Chart name='magn' sensor={lastSensors[2]}/>
-        <Chart name='gyro' sensor={lastSensors[4]}/>
-        <Chart name='lacc' sensor={lastSensors[10]}/>
-      </div>
-    );
-  }
+		for (let i = 0; i < this.props.sensors.length; i++) {
+			list.push(<MenuItem className='menu-item' value={i} key={i} primaryText={this.props.sensors[i].filename} />)
+		};
 
-  openFileDialog() {
-    var fileUploadDom = ReactDOM.findDOMNode(this.refs.fileUpload);
-    fileUploadDom.click();
-  }
+		return list;
+	}
 
-  handleChange(e) {
-    console.log("Handle change");
+	loadChart() {
+			this.setState({
+				selectedSensor: this.props.sensors[this.state.selectedSensorIndex]
+			})
+	}
 
-    var _this = this;
-    var sensors = {};
-    var firstTimeValue = 0;
+	openFileDialog() {
+		var fileUploadDom = ReactDOM.findDOMNode(this.refs.fileUpload);
+		fileUploadDom.click();
+	}
 
-    for(var i = 0, file; file = e.target.files[i]; i++) {
-      Papa.parse(file, {
-        step: function(row) {
-          var sensorRow = row.data[0];
-          var sensorID = sensorRow.splice(0, 1)[0];
+	handleChange(e) {
+		var _this = this;
+		var sensors = {};
+		var firstTimeValue = 0;
 
-          if (sensorRow[0] !== '0' && firstTimeValue === 0)
-          firstTimeValue = parseFloat(sensorRow[0]);
-          sensorRow[0] = parseFloat(sensorRow[0]) - firstTimeValue;
-          sensorRow[0] = _this.nanoToMili(sensorRow[0]);
+		for(var i = 0, file; file = e.target.files[i]; i++) {
+			const filename = file['name'];
+			Papa.parse(file, {
+				step: function(row) {
+					var sensorRow = row.data[0];
+					var sensorID = sensorRow.splice(0, 1)[0];
 
-          for (var i=1; i < sensorRow.length; i++)
-          sensorRow[i] = parseFloat(sensorRow[i]);
+					if (sensorRow[0] !== '0' && firstTimeValue === 0)
+					firstTimeValue = parseFloat(sensorRow[0]);
+					sensorRow[0] = parseFloat(sensorRow[0]) - firstTimeValue;
+					sensorRow[0] = Math.round(sensorRow[0]/100000);
+					for (var i=1; i < sensorRow.length; i++)
+					sensorRow[i] = parseFloat(sensorRow[i]);
 
-          if (sensors[sensorID] === undefined)
-          sensors[sensorID] = [];
-          sensors[sensorID].push(sensorRow);
-        },
-        complete: function() {
-          delete sensors[""]; // Delete empty id
-          Meteor.call('sensors.insert', sensors);
-          // _this.handleNewSensors(sensors);
-        }
-      });
-    }
-  }
+					if (sensors[sensorID] === undefined)
+					sensors[sensorID] = [];
+					sensors[sensorID].push(sensorRow);
+				},
+				complete: function() {
+					delete sensors[""]; // Delete empty id
+					Meteor.call('sensors.insert', filename, sensors);
+				}
+			});
+		}
+	}
 
-  render() {
-    const buttonStyle = {
-      margin: 12,
-    };
+	render() {
+		const buttonStyle = {
+			margin: 12,
+		};
 
-    return (
-      <div>
-        <Button floating fab='horizontal' icon='add' className='red' large style={{bottom: '45px', right: '24px'}}>
-          <Button floating icon='publish' className='green' onClick={this.openFileDialog.bind(this)}>
-            <input ref="fileUpload" type="file" name="file" style={{"display" : "none"}} onChange={this.handleChange.bind(this)}/>
-          </Button>
-        </Button>
+		return (
+			<div>
+				<Button floating fab='horizontal' icon='add' className='red' large style={{bottom: '45px', right: '24px'}}>
+					<Button floating icon='publish' className='green' onClick={this.openFileDialog.bind(this)}>
+						<input ref="fileUpload" type="file" name="file" style={{"display" : "none"}} onChange={this.handleChange.bind(this)}/>
+					</Button>
+				</Button>
 
-        {this.renderCharts()}
+				<div id='main-flexbox'>
+					<div id='loading-file-flexbox'>
+						<Button onClick={this.loadChart.bind(this)}>Load</Button>
+						<SelectField className="file-select" value={this.state.selectedSensorIndex} onChange={this.handleSelectChange.bind(this)}>
+							{this.renderFilesHistoryList()}
+						</SelectField>
+					</div>
 
-      </div>
-    );
-  }
+					<SensorsCharts sensor={this.state.selectedSensor}/>
+				</div>
+
+			</div>
+		);
+	}
 }
 
 SensorsWrapper.propTypes = {
-  sensors: PropTypes.array.isRequired,
+	sensors: PropTypes.array.isRequired,
 };
 
 export default createContainer(() => {
-  Meteor.subscribe('sensors');
+	Meteor.subscribe('sensors');
 
-  return {
-    sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch(),
-  };
+	return {
+		sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch(),
+	};
 }, SensorsWrapper);

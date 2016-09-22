@@ -1,15 +1,7 @@
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import App from '../imports/ui/App.jsx';
-
-const AppLayout = () => (
-    <MuiThemeProvider>
-        <App/>
-    </MuiThemeProvider>
-);
+import { renderRoutes } from './routes.jsx';
 
 Meteor.startup(() => {
-    render(<AppLayout/>, document.getElementById('render-target'));
+		render(renderRoutes(), document.getElementById('render-target'));
 });

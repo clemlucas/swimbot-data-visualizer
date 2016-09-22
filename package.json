@@ -8,11 +8,17 @@
     "bcrypt": "^0.8.7",
     "material-ui": "^0.15.4",
     "meteor-node-stubs": "~0.2.0",
+    "minimatch": "^3.0.3",
     "react": "^15.3.1",
     "react-addons-pure-render-mixin": "^15.3.1",
     "react-dom": "^15.3.1",
+    "react-dropdown": "^1.1.0",
     "react-dropzone": "^3.6.0",
     "react-materialize": "^0.16.4",
+    "react-router": "^2.8.1",
     "react-tap-event-plugin": "^1.0.0"
+  },
+  "devDependencies": {
+    "electron": "^1.4.0"
   }
 }
