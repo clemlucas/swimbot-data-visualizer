@@ -85,6 +85,7 @@ export default class SensorsWrapper extends Component {
 				complete: function() {
 					delete sensors[""]; // Delete empty id
 					Meteor.call('sensors.insert', filename, sensors);
+					console.log("New entry: " + filename);
 				}
 			});
 		}
