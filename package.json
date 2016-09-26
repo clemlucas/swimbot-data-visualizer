@@ -2,7 +2,7 @@
   "name": "ynoapp",
   "private": true,
   "engines": {
-      "node": "5.9.1"
+    "node": "5.9.1"
   },
   "scripts": {
     "start": "meteor run"
@@ -14,6 +14,7 @@
     "minimatch": "^3.0.3",
     "react": "^15.3.1",
     "react-addons-pure-render-mixin": "^15.3.1",
+    "react-autobind": "^1.0.6",
     "react-dom": "^15.3.1",
     "react-dropdown": "^1.1.0",
     "react-dropzone": "^3.6.0",

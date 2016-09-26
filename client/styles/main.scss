@@ -45,11 +45,11 @@ nav {
 	font-size: 1.2vmin !important;
 }
 
-#main-flexbox {
+#horizontal-flexbox {
 	display: flex;
 }
 
-#loading-file-flexbox {
+#vertical-flexbox {
 	padding-left: 12px;
 	display: flex;
 	flex-direction: column;

@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import { Sensors } from '../api/sensors.js';
-import { Button, Icon, Col, Row } from 'react-materialize';
+import { Button, Icon, Col, Row, Preloader } from 'react-materialize';
+import { Link } from 'react-router';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 import SensorsCharts from './SensorsCharts.jsx';
+
+// Sensors.find({}, { sort: {createdAt: -1} }).fetch()
 
 export default class SensorsWrapper extends Component {
 	constructor(props) {
@@ -15,32 +18,40 @@ export default class SensorsWrapper extends Component {
 
 		this.state = {
 			selectedSensorIndex: 0,
-			selectedSensor: {}
+			selectedSensorId: -1,
+			sensors: []
 		};
 	}
 
-	handleSelectChange(event, index, value) {
-		console.log(index, value);
+	componentWillMount() {
+		var _this = this;
+		Meteor.subscribe('sensors', function() {
+			console.log("Data is loaded");
+			_this.setState({ sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch()});
+		});
 
+		if (this.state.sensors.length > 0) {
+			this.setState({
+				selectedSensorId: this.state.sensors[0]._id,
+			});
+		}
+	}
+
+	handleSelectChange(event, index, value) {
 		this.setState({
 			selectedSensorIndex: index,
+			selectedSensorId: this.state.sensors[index]._id
 		});
 	};
 
 	renderFilesHistoryList() {
 		let list = [];
 
-		for (let i = 0; i < this.props.sensors.length; i++) {
-			list.push(<MenuItem className='menu-item' value={i} key={i} primaryText={this.props.sensors[i].filename} />)
+		for (let i = 0; i < this.state.sensors.length; i++) {
+			list.push(<MenuItem className='menu-item' value={i} key={i} primaryText={this.state.sensors[i].filename} />)
 		};
 
 		return list;
-	}
-
-	loadChart() {
-			this.setState({
-				selectedSensor: this.props.sensors[this.state.selectedSensorIndex]
-			})
 	}
 
 	openFileDialog() {
@@ -92,30 +103,19 @@ export default class SensorsWrapper extends Component {
 					</Button>
 				</Button>
 
-				<div id='main-flexbox'>
-					<div id='loading-file-flexbox'>
-						<Button onClick={this.loadChart.bind(this)}>Load</Button>
+				<div id='horizontal-flexbox'>
+					<div id='vertical-flexbox'>
+						<Link to={'/sensor/' + encodeURIComponent(this.state.selectedSensorId)}><Button>Load</Button></Link>
+
 						<SelectField className="file-select" value={this.state.selectedSensorIndex} onChange={this.handleSelectChange.bind(this)}>
 							{this.renderFilesHistoryList()}
 						</SelectField>
 					</div>
 
-					<SensorsCharts sensor={this.state.selectedSensor}/>
+					{this.props.children || <h4>Select a file from the list</h4>}
 				</div>
 
 			</div>
 		);
 	}
 }
-
-SensorsWrapper.propTypes = {
-	sensors: PropTypes.array.isRequired,
-};
-
-export default createContainer(() => {
-	Meteor.subscribe('sensors');
-
-	return {
-		sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch(),
-	};
-}, SensorsWrapper);

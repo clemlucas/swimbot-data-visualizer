@@ -35,6 +35,7 @@ cfs:worker@0.1.4
 check@1.2.3
 coffeescript@1.0.17
 cosmos:browserify@0.8.4
+dburles:collection-helpers@1.0.4
 ddp@1.2.5
 ddp-client@1.2.9
 ddp-common@1.2.6

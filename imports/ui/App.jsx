@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Navbar } from 'react-materialize';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import SensorsWrapper from './SensorsWrapper.jsx';
 
 const styles = {
@@ -29,7 +30,9 @@ export default class App extends Component {
 					</div>
 				</nav>
 
-				<SensorsWrapper/>
+				<MuiThemeProvider>
+					{this.props.children}
+				</MuiThemeProvider>
 
 			</div>
 		);
