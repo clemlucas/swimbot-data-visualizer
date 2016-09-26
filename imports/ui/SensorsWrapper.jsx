@@ -24,17 +24,19 @@ export default class SensorsWrapper extends Component {
 	}
 
 	componentWillMount() {
+		this.fetchSensorsCollection();
+	}
+
+	fetchSensorsCollection() {
 		var _this = this;
 		Meteor.subscribe('sensors', function() {
-			console.log("Data is loaded");
-			_this.setState({ sensors: Sensors.find({}, { sort: {createdAt: -1} }).fetch()});
-		});
-
-		if (this.state.sensors.length > 0) {
-			this.setState({
-				selectedSensorId: this.state.sensors[0]._id,
+			var fetchedSensors = Sensors.find({}, { sort: {createdAt: -1} }).fetch();
+			console.log("Data fetched", fetchedSensors);
+			_this.setState({
+				sensors: fetchedSensors,
+				selectedSensorId: fetchedSensors[0]._id
 			});
-		}
+		});
 	}
 
 	handleSelectChange(event, index, value) {
@@ -86,6 +88,7 @@ export default class SensorsWrapper extends Component {
 					delete sensors[""]; // Delete empty id
 					Meteor.call('sensors.insert', filename, sensors);
 					console.log("New entry: " + filename);
+					_this.fetchSensorsCollection();
 				}
 			});
 		}
