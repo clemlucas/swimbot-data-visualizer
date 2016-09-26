@@ -100,7 +100,7 @@ export default class SensorsWrapper extends Component {
 			<div>
 				<Button floating fab='horizontal' icon='add' className='red' large style={{bottom: '45px', right: '24px'}}>
 					<Button floating icon='publish' className='green' onClick={this.openFileDialog.bind(this)}>
-						<input ref="fileUpload" type="file" name="file" style={{"display" : "none"}} onChange={this.handleChange.bind(this)}/>
+						<input ref="fileUpload" type="file" accept=".csv" name="file" style={{"display" : "none"}} onChange={this.handleChange.bind(this)}/>
 					</Button>
 				</Button>
 
